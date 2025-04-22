@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KLS iSpy Game</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #game {
+      position: relative;
+      width: 1400px;
+      height: 600px;
+      background-image: url('kls.jpg');
+      background-size: cover;
+      border: 4px solid #444;
+      margin-bottom: 20px;
+    }
+    .item {
+      position: absolute;
+      cursor: pointer;
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #log {
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #333;
+      width: 600px;
+      background-color: #222;
+    }
+    #boxBtn {
+      margin: 20px;
+      padding: 10px;
+      background: #444;
+      cursor: pointer;
+    }
+    #foundList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .foundIcon {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #888;
+      animation: spin 1s linear;
+    }
+
+    /* Intro Modal Styles */
+    #introModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #introContent {
+      background: #222;
+      color: white;
+      padding: 30px;
+      max-width: 600px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+    #introContent img {
+      width: 150px;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    #introContent button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #444;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    /* Missing Modal Styles */
+    #missingModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+    }
+    #missingContent {
+      background: #222;
+      color: white;
+      padding: 30px;
+      max-width: 400px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+    #missingContent h2 {
+      margin-top: 0;
+    }
+    #missingContent ul {
+      text-align: left;
+      padding-left: 20px;
+    }
+    #missingContent button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #444;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>KLS iSpy Game</h1>
+  <div id="game">
+    <img src="instrumentmodule.png" class="item" style="top:366px; left:120px; width:35px" onclick="foundItem('Instrument module')">
+    <img src="orbit.png" class="item" style="top:420px; left:440px; width:35px" onclick="foundItem('orbit')">
+    <img src="cranialmaxillofacialrecon.png" class="item" style="top:328px; left:380px; width:35px" onclick="foundItem('CranialMaxillofacialrecon')">
+    <img src="peek.png" class="item" style="top:285px; left:1200px; width:35px" onclick="foundItem('peek')">
+    <img src="mandplate.png" class="item" style="top:320px; left:1020px; width:35px" onclick="foundItem('MandPlate')">
+  </div>
+  <div id="log">Find all the products so we can get this case shipped!</div>
+  <div id="boxBtn" onclick="toggleBox()">📦 View Product List</div>
+  <div id="foundList"></div>
+
+  <!-- Intro Modal -->
+  <div id="introModal">
+    <div id="introContent">
+      <img src="AourNaur.png" alt="Cleaour crying dramatically">
+      <p>Oaur naur Cleaour a prankster moved all the products needed for this case and hid them in this room.<br><br>
+      Can you help me find all the products so I can get this case shipped?</p>
+      <button onclick="closeIntro()">Let’s go!</button>
+    </div>
+  </div>
+
+  <!-- Missing Items Modal -->
+  <div id="missingModal" style="display: none;">
+    <div id="missingContent">
+      <h2>We're still missing:</h2>
+      <ul id="missingList"></ul>
+      <button onclick="closeMissing()">Got it!</button>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function() {
+      document.getElementById('introModal').style.display = 'flex';
+    };
+
+    function closeIntro() {
+      document.getElementById('introModal').style.display = 'none';
+    }
+
+    function closeMissing() {
+      document.getElementById('missingModal').style.display = 'none';
+    }
+
+    const products = {
+      'Instrument module': 'Sterile surgical tools kit for cranio-maxillofacial procedures.',
+      'orbit': 'An implant designed to support and reconstruct the eye socket.',
+      'CranialMaxillofacialrecon': 'Used for facial bone reconstruction procedures.',
+      'peek': 'Customized skull implant made from high-performance polymer.',
+      'MandPlate': 'Mandibular plate for jaw fixation and reconstruction.'
+    };
+
+    const foundItems = new Set();
+
+    function foundItem(name) {
+      if (!foundItems.has(name)) {
+        foundItems.add(name);
+        document.getElementById('log').innerText = `✔ Yep, that’s a ${name}: ${products[name]}`;
+        const img = document.createElement('img');
+        img.src = `${name.toLowerCase().replace(/\s+/g, '')}.png`;
+        img.classList.add('foundIcon');
+        document.getElementById('foundList').appendChild(img);
+        checkWin();
+      }
+    }
+
+    function toggleBox() {
+      const missingList = document.getElementById('missingList');
+      missingList.innerHTML = '';
+
+      let missing = Object.keys(products).filter(p => !foundItems.has(p));
+
+      if (missing.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'All items found! 🎉';
+        missingList.appendChild(li);
+      } else {
+        missing.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          missingList.appendChild(li);
+        });
+      }
+
+      document.getElementById('missingModal').style.display = 'flex';
+    }
+
+    function checkWin() {
+      if (foundItems.size === Object.keys(products).length) {
+        document.getElementById('log').innerText = '🎉 This case is ready to ship out!';
+      }
+    }
+  </script>
+</body>
+</html>
