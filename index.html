@@ -13,6 +13,45 @@
       flex-direction: column;
       align-items: center;
     }
+
+    #toggleTheme {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 8px 16px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    .light-mode #toggleTheme {
+      background: #ddd;
+      color: #111;
+    }
+
+    .light-mode {
+      background-color: #f5f5f5;
+      color: #111;
+    }
+
+    .light-mode #log,
+    .light-mode #missingContent,
+    .light-mode #introContent {
+      background-color: #fff;
+      color: #000;
+      border-color: #ccc;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .light-mode #boxBtn,
+    .light-mode button {
+      background-color: #eee;
+      color: #000;
+    }
+
     #game {
       position: relative;
       width: 1400px;
@@ -21,16 +60,20 @@
       background-size: cover;
       border: 4px solid #444;
       margin-bottom: 20px;
+      cursor: url('Glove.png'), auto;
     }
+
     .item {
       position: absolute;
       cursor: pointer;
       animation: fadeIn 0.5s ease-in;
     }
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
     #log {
       margin: 10px;
       padding: 10px;
@@ -38,18 +81,21 @@
       width: 600px;
       background-color: #222;
     }
+
     #boxBtn {
       margin: 20px;
       padding: 10px;
       background: #444;
       cursor: pointer;
     }
+
     #foundList {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 10px;
     }
+
     .foundIcon {
       width: 40px;
       height: 40px;
@@ -68,6 +114,7 @@
       justify-content: center;
       z-index: 9999;
     }
+
     #introContent {
       background: #222;
       color: white;
@@ -77,12 +124,14 @@
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(255,255,255,0.2);
     }
+
     #introContent img {
       width: 150px;
       height: auto;
       border-radius: 8px;
       margin-bottom: 20px;
     }
+
     #introContent button {
       margin-top: 20px;
       padding: 10px 20px;
@@ -104,6 +153,7 @@
       justify-content: center;
       z-index: 9998;
     }
+
     #missingContent {
       background: #222;
       color: white;
@@ -113,13 +163,16 @@
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(255,255,255,0.2);
     }
+
     #missingContent h2 {
       margin-top: 0;
     }
+
     #missingContent ul {
       text-align: left;
       padding-left: 20px;
     }
+
     #missingContent button {
       margin-top: 20px;
       padding: 10px 20px;
@@ -132,6 +185,7 @@
   </style>
 </head>
 <body>
+  <button id="toggleTheme" onclick="toggleTheme()">🌙 Toggle Theme</button>
   <h1>KLS iSpy Game</h1>
   <div id="game">
     <img src="instrumentmodule.png" class="item" style="top:366px; left:120px; width:35px" onclick="foundItem('Instrument module')">
@@ -174,6 +228,12 @@
 
     function closeMissing() {
       document.getElementById('missingModal').style.display = 'none';
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      document.getElementById('toggleTheme').innerText = isLight ? '🌞 Toggle Theme' : '🌙 Toggle Theme';
     }
 
     const products = {
